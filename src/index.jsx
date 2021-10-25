@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles.css';
-import {Route, BrowserRouter as Router} from 'react-router-dom'
+import {Route, HashRouter as Router} from 'react-router-dom'
 import App from './App'
 import Bingo from './bingo'
 import CocoSpeed from './CocoSpeed';
