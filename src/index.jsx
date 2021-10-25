@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles.css';
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import {Route, HashRouter as Router} from 'react-router-dom'
+
+import './styles.css';
 import App from './App'
 import Bingo from './bingo'
 import CocoSpeed from './CocoSpeed';

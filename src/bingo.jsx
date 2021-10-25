@@ -5,25 +5,27 @@ import React from 'react';
 
 import GSheetReader from 'g-sheets-api'
 
+import Loader from 'react-loader-spinner'
+
 const squareCnt = 25;
 
 function randomInt(min, max) {
   return Math.floor(Math.random() * max + min);
 }
 
-function randomSquares(data,n) {
+function randomSquares(data, n) {
   let rndSet = new Set();
   let rndArray = Array(n);
   const max = data.length - 1;
-  console.log(max);
-  while (rndSet.size < n) {
-    const i = randomInt(0, max);
-    if (!rndSet.has(i)) {
-      console.log(data[i]);
-      const rarity = (data[i].rarity ? data[i].rarity : 1)
-      if (rarity >= Math.random()) {
-        rndSet.add(i);
-        rndArray[rndSet.size - 1] = data[i];
+  if (max >= 0) {
+    while (rndSet.size < n) {
+      const i = randomInt(0, max);
+      if (!rndSet.has(i)) {
+        const rarity = (data[i].rarity ? data[i].rarity : 1)
+        if (rarity >= Math.random()) {
+          rndSet.add(i);
+          rndArray[rndSet.size - 1] = data[i];
+        }
       }
     }
   }
@@ -47,47 +49,55 @@ class Game extends React.Component {
     super(props);
     // handle custom title
     const title = props.title ? props.title : 'BINGO';
-    // handle custom dataset
-    if (props.dataset) {
-      this.dataset = props.dataset;
-      if (props.dataset === 'CocoSpeed') {
-        let tmpData = [];
-        const options = {
-          apiKey: 'AIzaSyCG-9qmMIr-LQHGpSRZTin4hlUI-vhMhnY',
-          sheetId: '1_-k6lQkb_LIquDp5OQcKAbhq2C4q_xekPaO5W5-ywhs',
-          sheetName: 'Speedrun',
-          returnAllResults: true,
-        }
-        GSheetReader(options, results => {
+    this.dataset = props.dataset ? props.dataset : 'BINGO';
+    this.state = { loading: true, title: title, data: [], squares: [] };
+  }
+
+  componentDidMount() {
+    if (this.state.loading) {
+      this.getData(this.props);
+    }
+  }
+
+  getData = async (props) => {
+    let newState = this.state;
+    let tmpData = [];
+    if (props.dataset === 'CocoSpeed') {
+      const options = {
+        apiKey: 'AIzaSyCG-9qmMIr-LQHGpSRZTin4hlUI-vhMhnY',
+        sheetId: '1_-k6lQkb_LIquDp5OQcKAbhq2C4q_xekPaO5W5-ywhs',
+        sheetName: 'Speedrun',
+        returnAllResults: true,
+      }
+      
+       await GSheetReader(options, results => {
           tmpData = results;
-          console.log(tmpData);
         }).catch(err => {
           console.log(err);
         });
-        this.data = tmpData;
-      }
-    } else {
-      this.dataset = 'BINGO';
-      const tmpData = Array(75).fill({});
-      for (let i = 0; i < tmpData.length;i++) {
-        tmpData[i] = {"value":i+1};
-      }
-      this.data = tmpData;
     }
-    this.minId = 0;
-    this.maxId = this.data.length - 1;
+    if (tmpData.length === 0) {
+      tmpData = Array(75).fill({});
+      for (let i = 0; i < tmpData.length; i++) {
+        tmpData[i] = { "value": i + 1 };
+      }
+    }
+    newState.data = tmpData;
     // check for saved data
-    const prevState = localStorage.getItem(this.dataset);
-    if (prevState) {
-      this.state = JSON.parse(prevState);
+    const prevSquares = localStorage.getItem(this.dataset);
+    if (prevSquares) {
+      newState.squares = JSON.parse(prevSquares);
     } else {
-      this.state = { title: title, squares: Array(squareCnt).fill({}) };
-      const rndArray = randomSquares(this.data,squareCnt);
-      for (let i = 0; i < this.state.squares.length; i++) {
-        this.state.squares[i] = { id: i, value: rndArray[i].value, desc: '', state: false, };
+      let squares = Array(squareCnt).fill({});
+      const rndArray = randomSquares(newState.data, squareCnt);
+      for (let i = 0; i < squares.length; i++) {
+        squares[i] = { id: i, value: rndArray[i].value, desc: '', state: false, };
       }
-      localStorage.setItem(this.dataset,JSON.stringify(this.state));
+      newState.squares = squares;
     }
+    newState.loading = false;
+    this.setState(newState);
+    localStorage.setItem(this.dataset, JSON.stringify(this.state.squares));
   }
 
   handleClick(i) {
@@ -95,7 +105,7 @@ class Game extends React.Component {
     const square = newState.squares[i];
     newState.squares[i].state = !square.state;
     this.setState(newState);
-    localStorage.setItem(this.dataset,JSON.stringify(this.state));
+    localStorage.setItem(this.dataset, JSON.stringify(this.state.squares));
   }
 
   handleClear() {
@@ -104,18 +114,18 @@ class Game extends React.Component {
       newState.squares[i].state = false;
     }
     this.setState(newState);
-    localStorage.setItem(this.dataset,JSON.stringify(this.state));
+    localStorage.setItem(this.dataset, JSON.stringify(this.state.squares));
   }
 
   handleNew() {
     let newState = this.state;
-    const rndArray = randomSquares(this.data,squareCnt);
+    const rndArray = randomSquares(this.state.data, squareCnt);
     for (let i = 0; i < newState.squares.length; i++) {
       newState.squares[i].state = false;
       newState.squares[i].value = rndArray[i].value;
     }
     this.setState(newState);
-    localStorage.setItem(this.dataset,JSON.stringify(this.state));
+    localStorage.setItem(this.dataset, JSON.stringify(this.state.squares));
   }
 
   render() {
@@ -131,10 +141,15 @@ class Game extends React.Component {
           </div>
         </header>
         <div className='game-board'>
-          <Board
-            squares={this.state.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
+          {
+            this.state.loading ?
+              <Loader type='ThreeDots' color='lightskyblue' height={100} width={100} />
+              :
+              <Board
+                squares={this.state.squares}
+                onClick={(i) => this.handleClick(i)}
+              />
+          }
         </div>
       </div>
     );
