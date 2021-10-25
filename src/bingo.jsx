@@ -15,9 +15,11 @@ function randomSquares(data,n) {
   let rndSet = new Set();
   let rndArray = Array(n);
   const max = data.length - 1;
+  console.log(max);
   while (rndSet.size < n) {
     const i = randomInt(0, max);
     if (!rndSet.has(i)) {
+      console.log(data[i]);
       const rarity = (data[i].rarity ? data[i].rarity : 1)
       if (rarity >= Math.random()) {
         rndSet.add(i);
@@ -58,6 +60,7 @@ class Game extends React.Component {
         }
         GSheetReader(options, results => {
           tmpData = results;
+          console.log(tmpData);
         }).catch(err => {
           console.log(err);
         });
