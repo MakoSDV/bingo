@@ -37,9 +37,6 @@ function randomSquares(data, n) {
                 sq.desc = descOptions[0]; // handle if the descriptions are too short
               }
             }
-            console.log(optId);
-            console.log(data[i]);
-            console.log(sq);
           }
           rndArray[rndSet.size - 1] = sq;
         }
