@@ -5,6 +5,8 @@ import GSheetReader from 'g-sheets-api'
 import Loader from 'react-loader-spinner'
 
 const squareCnt = 25;
+const gsApiKey = 'AIzaSyCG-9qmMIr-LQHGpSRZTin4hlUI-vhMhnY';
+const gsId = '1_-k6lQkb_LIquDp5OQcKAbhq2C4q_xekPaO5W5-ywhs';
 
 function randomInt(min, max) {
   return Math.floor(Math.random() * max + min);
@@ -21,7 +23,25 @@ function randomSquares(data, n) {
         const rarity = (data[i].rarity ? data[i].rarity : 1)
         if (rarity >= Math.random()) {
           rndSet.add(i);
-          rndArray[rndSet.size - 1] = data[i];
+          //handle multiple exclusive options for square
+          let sq = { ...data[i]}; // clone the data object
+          if (data[i].value.includes('||')) {
+            let valueOptions = data[i].value.split('||')
+            let optId = randomInt(0,valueOptions.length);
+            sq.value = valueOptions[optId];
+            if (data[i].desc && data[i].desc.includes('||')) {
+              let descOptions = data[i].desc.split('||');
+              if (optId < descOptions.length) {
+                sq.desc = descOptions[optId];
+              } else {
+                sq.desc = descOptions[0]; // handle if the descriptions are too short
+              }
+            }
+            console.log(optId);
+            console.log(data[i]);
+            console.log(sq);
+          }
+          rndArray[rndSet.size - 1] = sq;
         }
       }
     }
@@ -76,11 +96,11 @@ class Game extends React.Component {
   getData = async (props) => {
     let newState = this.state;
     let tmpData = [];
-    if (props.dataset === 'CocoSpeed') {
+    if (props.dataset !== 'BINGO') {
       const options = {
-        apiKey: 'AIzaSyCG-9qmMIr-LQHGpSRZTin4hlUI-vhMhnY',
-        sheetId: '1_-k6lQkb_LIquDp5OQcKAbhq2C4q_xekPaO5W5-ywhs',
-        sheetName: 'Speedrun',
+        apiKey: gsApiKey,
+        sheetId: gsId,
+        sheetName: props.dataset,
         returnAllResults: true,
       }
 
