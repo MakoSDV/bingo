@@ -24,17 +24,19 @@ function randomSquares(data, n) {
         if (rarity >= Math.random()) {
           rndSet.add(i);
           //handle multiple exclusive options for square
-          let sq = { ...data[i]}; // clone the data object
-          if (data[i].value.includes('||')) {
-            let valueOptions = data[i].value.split('||')
-            let optId = randomInt(0,valueOptions.length);
-            sq.value = valueOptions[optId];
-            if (data[i].desc && data[i].desc.includes('||')) {
-              let descOptions = data[i].desc.split('||');
-              if (optId < descOptions.length) {
-                sq.desc = descOptions[optId];
-              } else {
-                sq.desc = descOptions[0]; // handle if the descriptions are too short
+          let sq = { ...data[i] }; // clone the data object
+          if (data[i].value instanceof String) { // ignore this for the plain Bingo with just numbers
+            if (data[i].value.includes('||')) {
+              let valueOptions = data[i].value.split('||')
+              let optId = randomInt(0, valueOptions.length);
+              sq.value = valueOptions[optId];
+              if (data[i].desc && data[i].desc.includes('||')) {
+                let descOptions = data[i].desc.split('||');
+                if (optId < descOptions.length) {
+                  sq.desc = descOptions[optId];
+                } else {
+                  sq.desc = descOptions[0]; // handle if the descriptions are too short
+                }
               }
             }
           }
@@ -127,8 +129,10 @@ class Game extends React.Component {
       newState.squares = squares;
     }
     newState.loading = false;
+    newState.generated = new Date().toISOString();
     this.setState(newState);
     localStorage.setItem(this.dataset, JSON.stringify(this.state.squares));
+    localStorage.setItem(this.dataset + "_generated", this.state.generated);
   }
 
   handleClick(i) {
@@ -156,8 +160,10 @@ class Game extends React.Component {
       newState.squares[i].value = rndArray[i].value;
       newState.squares[i].desc = rndArray[i].desc;
     }
+    newState.generated = new Date().toISOString();
     this.setState(newState);
     localStorage.setItem(this.dataset, JSON.stringify(this.state.squares));
+    localStorage.setItem(this.dataset + "_generated", this.state.generated);
   }
 
   render() {
@@ -170,6 +176,7 @@ class Game extends React.Component {
           <div className='game-controls'>
             <button onClick={() => this.handleClear()}>Clear</button>
             <button onClick={() => this.handleNew()}>New Card</button>
+            <div>Card generated: {this.state.generated}</div>
           </div>
         </header>
         <div className='game-board'>
