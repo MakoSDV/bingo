@@ -25,7 +25,7 @@ function randomSquares(data, n) {
           rndSet.add(i);
           //handle multiple exclusive options for square
           let sq = { ...data[i] }; // clone the data object
-          if (data[i].value instanceof String) { // ignore this for the plain Bingo with just numbers
+          if (typeof data[i].value === 'string') { // ignore this for the plain Bingo with just numbers
             if (data[i].value.includes('||')) {
               let valueOptions = data[i].value.split('||')
               let optId = randomInt(0, valueOptions.length);
