@@ -118,8 +118,10 @@ class Game extends React.Component {
     newState.data = tmpData;
     // check for saved data
     const prevSquares = localStorage.getItem(this.dataset);
+    const prevGenerated = localStorage.getItem(this.dataset + "_generated");
     if (prevSquares) {
       newState.squares = JSON.parse(prevSquares);
+      newState.generated = prevGenerated;
     } else {
       let squares = Array(squareCnt).fill({});
       const rndArray = randomSquares(newState.data, squareCnt);
@@ -127,9 +129,10 @@ class Game extends React.Component {
         squares[i] = { id: i, value: rndArray[i].value, desc: rndArray[i].desc, state: false, };
       }
       newState.squares = squares;
+      newState.generated = new Date().toISOString();
     }
     newState.loading = false;
-    newState.generated = new Date().toISOString();
+    
     this.setState(newState);
     localStorage.setItem(this.dataset, JSON.stringify(this.state.squares));
     localStorage.setItem(this.dataset + "_generated", this.state.generated);
