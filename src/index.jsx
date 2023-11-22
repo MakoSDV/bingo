@@ -6,7 +6,6 @@ import {Route, HashRouter as Router} from 'react-router-dom'
 import './styles.css';
 import App from './App'
 import Bingo from './bingo'
-//import CocoSpeed from './CocoSpeed';
 
 const routes = (
   <Router>
@@ -15,6 +14,7 @@ const routes = (
       <Route path='/bingo' component={Bingo} />
       <Route path='/CocoSpeed' render={() => (<Bingo title='CocoConfession Speedrun Chat Bingo' dataset='Speedrun'/>)} />
       <Route path='/Test' render={() =>(<Bingo title='Test' dataset='Test'/>)} />
+      <Route path='/8bitDee' render={() => (<Bingo title='DEESMAS Stream Bingo' dataset='8bitDee'/>)} />
     </div>
   </Router>
 );
