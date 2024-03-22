@@ -16,7 +16,7 @@ function randomSquares(data, n) {
   let rndSet = new Set();
   let rndArray = Array(n);
   const max = data.length;
-  if (max >= 0) {
+  if (max >= n) {
     while (rndSet.size < n) {
       const i = randomInt(0, max);
       if (!rndSet.has(i)) {
@@ -43,6 +43,16 @@ function randomSquares(data, n) {
           rndArray[rndSet.size - 1] = sq;
         }
       }
+    }
+  } else {
+    // handle the case where the Google Sheet doesn't have enough squares defined
+    rndArray[0] = {value:'Warning:',desc:'Warning'};
+    rndArray[1] = {value:'Insufficient',desc:'Insufficient'};
+    rndArray[2] = {value:'Squares!',desc:'Squares!'};
+    rndArray[3] = {value:'Define',desc:'Define'};
+    rndArray[4] = {value:'At Least 25.',desc:'At Least 25.'};
+    for (let i = 5; i < n; i++) {
+      rndArray[i] = {value: '...', desc: '...'}
     }
   }
   return rndArray;

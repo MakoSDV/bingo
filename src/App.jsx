@@ -8,6 +8,7 @@ class App extends React.Component {
         <h2><a href='/#/bingo'>Standard Bingo 75</a></h2>
         <h2><a href='/#/CocoSpeed'>CocoConfession ALttP Speed Run Bingo</a></h2>
         <h2><a href='/#/8bitDee'>8bitDee Bingo</a></h2>
+        <h2><a href='/#/CocoCrazyCastle'>CocoConfession Crazy Castle Bingo</a></h2>
       </div>
     )
   }

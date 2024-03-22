@@ -15,6 +15,7 @@ const routes = (
       <Route path='/CocoSpeed' render={() => (<Bingo title='CocoConfession Speedrun Chat Bingo' dataset='Speedrun'/>)} />
       <Route path='/Test' render={() =>(<Bingo title='Test' dataset='Test'/>)} />
       <Route path='/8bitDee' render={() => (<Bingo title='DEESMAS Stream Bingo' dataset='8bitDee'/>)} />
+      <Route path='/CocoCrazyCastle' render={() => (<Bingo title='CocoConfession Crazy Castle Bingo' dataset='BBCC2'/>)} />
     </div>
   </Router>
 );
