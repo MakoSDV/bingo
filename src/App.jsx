@@ -17,7 +17,9 @@ class App extends React.Component {
         <h2>
           <a href="/#/CocoCrazyCastle">CocoConfession Crazy Castle Bingo</a>
         </h2>
-        <h2> <a href="/#/Test">Test</a></h2>
+        <h2>
+          <a href="/#/Test">Test</a>
+        </h2>
       </div>
     );
   }

@@ -56,23 +56,32 @@ h2 {
 }
 
 .square {
+  box-sizing: border-box;
   color: white;
   background-color: black;
-  border: 1px solid white;
+  border: 1px solid #595959;
   width: 19vmin;
   min-width: 50px;
   max-width: 180px;
   aspect-ratio: 1;
-  font-size: clamp(0.7rem, 3vmin, 1.8rem);
+  --size: clamp(0.7rem, 3vmin, 1.8rem);
+  font-size: var(--size);
   padding: 0.2rem;
+  --outline: calc(var(--size) / 16);
+  text-shadow: calc(-1 * var(--outline)) var(--outline) var(--outline) black,
+    var(--outline) var(--outline) var(--outline) black,
+    var(--outline) calc(-1 * var(--outline)) var(--outline) black,
+    calc(-1 * var(--outline)) calc(-1 * var(--outline)) var(--outline) black;
 }
 
 .checked {
-  background-color: darkred;
+  background-color: #800000;
+  border-color: #cc0000;
 }
 
 .bingo {
-  background-color: purple;
+  background-color: #660066;
+  border-color: #cc00cc;
 }
 
 .descriptions {

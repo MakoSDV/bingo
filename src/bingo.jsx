@@ -95,12 +95,36 @@ function Descriptions(props) {
   let squares = props.squares;
   for (let i = 0; i < squares.length; i++) {
     if (squares[i].desc) {
-      descriptions.push({
-        id: squares[i].id ? squares[i].id : i,
-        value: squares[i].value,
-        desc: squares[i].desc,
-        color: squares[i].color,
-      });
+      if (squares[i].value.includes("||")) {
+        let valueOptions = squares[i].value.split("||");
+        for (let d = 0; d < valueOptions.length; d++) {
+          let value = valueOptions[d];
+          let desc = squares[i].desc;
+          if (squares[i].desc.includes("||")) {
+            let descOptions = squares[i].desc.split("||");
+            if (d < descOptions.length) {
+              desc = descOptions[d];
+            } else {
+              desc = descOptions[0]; // handle if the descriptions are too short
+            }
+          }
+          descriptions.push({
+            id: squares[i].id
+              ? String(squares[i].id) + "_" + String(d)
+              : String(i) + "_" + String(d),
+            value: value,
+            desc: desc,
+            color: squares[i].color,
+          });
+        }
+      } else {
+        descriptions.push({
+          id: squares[i].id ? squares[i].id : i,
+          value: squares[i].value,
+          desc: squares[i].desc,
+          color: squares[i].color,
+        });
+      }
     }
   }
   descriptions.sort((a, b) => {
@@ -174,7 +198,7 @@ class Game extends React.Component {
     // check for saved data
     const prevSquares = localStorage.getItem(this.dataset);
     const prevGenerated = localStorage.getItem(this.dataset + "_generated");
-    if (prevSquares) {
+    if (prevSquares & (prevSquares.length > 0)) {
       newState.squares = JSON.parse(prevSquares);
       newState.generated = prevGenerated;
     } else {
@@ -186,6 +210,7 @@ class Game extends React.Component {
           value: rndArray[i].value,
           desc: rndArray[i].desc,
           state: false,
+          color: rndArray[i].color,
         };
       }
       newState.squares = squares;
@@ -292,11 +317,7 @@ class Game extends React.Component {
         </header>
         <div className="game-board">
           {this.state.loading ? (
-            <ThreeDots
-              color="lightskyblue"
-              height={100}
-              width={100}
-            />
+            <ThreeDots color="lightskyblue" height={100} width={100} />
           ) : (
             <Board
               squares={this.state.squares}
