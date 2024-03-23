@@ -198,7 +198,7 @@ class Game extends React.Component {
     // check for saved data
     const prevSquares = localStorage.getItem(this.dataset);
     const prevGenerated = localStorage.getItem(this.dataset + "_generated");
-    if (prevSquares & (prevSquares.length > 0)) {
+    if (prevSquares && (prevSquares.length > 0)) {
       newState.squares = JSON.parse(prevSquares);
       newState.generated = prevGenerated;
     } else {
